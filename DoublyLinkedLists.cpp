@@ -15,45 +15,114 @@ struct Cell {
  * be implemented iteratively, rather than recursively.
  */
 int lengthOf(Cell* list) {
-    /* TODO: Delete this comment and the next two lines, then implement this
-     * function.
-     */
-    (void) list;
-    return -1;
+    int count = 0;
+    while (list != nullptr) {
+        count++;
+        list = list->next;
+    }
+    return count;
 }
 
 /* Frees all memory used by the given doubly-linked list. This function must
  * be implemented iteratively, rather than recursively.
  */
 void freeDoublyLinkedList(Cell* list) {
-    /* TODO: Delete this comment and the next line, then implement this
-     * function.
-     */
-    (void) list;
+    while (list != nullptr) {
+        Cell* next = list->next;
+        delete list;
+        list = next;
+    }
 }
 
 /* Adds the given value to the front of the specified doubly-linked list. */
 void prependTo(Cell*& list, const string& value) {
-    /* TODO: Delete this comment and the next two lines, then implement this
-     * function.
-     */
-    (void) list;
-    (void) value;
+    Cell* newCell = new Cell;
+
+    newCell->value = value;
+    newCell->prev = nullptr;
+    newCell->next = list;
+
+    if(list != nullptr) {
+        list->prev = newCell;
+    }
+
+    list = newCell;
 }
 
 /* * * * * Test Cases Below This Point * * * * */
 #include "GUI/SimpleTest.h"
 
-/* Space for your own test cases, if you want to add them. */
+// STUDENT TESTS
+STUDENT_TEST("lengthOf: List of length 5.") {
+    Cell* a = new Cell;
+    Cell* b = new Cell;
+    Cell* c = new Cell;
+    Cell* d = new Cell;
+    Cell* e = new Cell;
 
+    a->next = b;
+    b->next = c;
+    c->next = d;
+    d->next = e;
+    e->next = nullptr;
 
+    EXPECT_EQUAL(lengthOf(a), 5);
 
+    freeDoublyLinkedList(a);
+}
 
+STUDENT_TEST("prependTo: Check forward and backward pointers.") {
+    Cell* list = new Cell;
+    list->value = "B";
+    list->next = nullptr;
+    list->prev = nullptr;
 
+    prependTo(list, "A");
 
+    EXPECT_EQUAL(list->value, "A");
+    EXPECT_EQUAL(list->next->value, "B");
+    EXPECT_EQUAL(list->prev, nullptr);
+    EXPECT_EQUAL(list->next->prev, list);
+    EXPECT_EQUAL(list->next->next, nullptr);
 
+    freeDoublyLinkedList(list);
+}
 
+STUDENT_TEST("prependTo: Multiple prepends.") {
+    Cell* list = nullptr;
 
+    prependTo(list, "C");
+    prependTo(list, "B");
+    prependTo(list, "A");
+
+    EXPECT_EQUAL(lengthOf(list), 3);
+
+    EXPECT_EQUAL(list->value, "A");
+    EXPECT_EQUAL(list->next->value, "B");
+    EXPECT_EQUAL(list->next->next->value, "C");
+
+    EXPECT_EQUAL(list->prev, nullptr);
+    EXPECT_EQUAL(list->next->prev, list);
+    EXPECT_EQUAL(list->next->next->prev, list->next);
+
+    freeDoublyLinkedList(list);
+}
+
+STUDENT_TEST("freeDoublyLinkedList: List of length 5.") {
+    Cell* a = new Cell;
+    Cell* b = new Cell;
+    Cell* c = new Cell;
+    Cell* d = new Cell;
+    Cell* e = new Cell;
+
+    a->next = b;
+    b->next = c;
+    c->next = d;
+    d->next = e;
+    e->next = nullptr;
+
+    freeDoublyLinkedList(a);
+}
 /* * * * * Provided Tests Below This Point * * * * */
 
 /* Tests for lengthOf */
