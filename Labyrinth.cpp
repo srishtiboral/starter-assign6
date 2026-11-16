@@ -3,26 +3,32 @@
 using namespace std;
 
 bool isPathToFreedom(MazeCell* start, const string& moves) {
+    if (start == nullptr) {
+        return false;
+    }
+
     MazeCell* curr = start;
     HashSet<Item> found;
+
     if (curr->whatsHere != Item::NOTHING) {
-        found.add(curr->whatsHere); }
+        found.add(curr->whatsHere);
+    }
     for (char move : moves) {
         if (move == 'N') {
             curr = curr->north;
-        }
-        else if (move == 'S') {
+        } else if (move == 'S') {
             curr = curr->south;
-        }
-        else if (move == 'E') {
+        } else if (move == 'E') {
             curr = curr->east;
-        }
-        else {
+        } else if (move == 'W') {
             curr = curr->west;
+        } else {
+            return false;
         }
         if (curr == nullptr) {
             return false;
-        } if (curr->whatsHere != Item::NOTHING) {
+        }
+        if (curr->whatsHere != Item::NOTHING) {
             found.add(curr->whatsHere);
         }
     }
