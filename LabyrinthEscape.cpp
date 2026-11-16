@@ -17,7 +17,7 @@ using namespace std;
 const char MyName[] = "Srishti Anika";
 
 /* Change these constants to contain the paths out of your mazes. */
-const char ThePathOutOfMyMaze[] = "TODO: Replace this string with your path out of the normal maze.";
+const char ThePathOutOfMyMaze[] = "NESSSNNESSNNWNWWSSES";
 const char ThePathOutOfMyTwistyMaze[] = "TODO: Replace this string with your path out of the twisty maze.";
 
 PROVIDED_TEST("Escape from the labyrinth!") {
