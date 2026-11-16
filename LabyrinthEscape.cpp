@@ -14,7 +14,7 @@ using namespace std;
  * a compiler warning message. Come talk to us over EdStem if you'd like to learn
  * more about this!
  */
-const char MyName[] = "Srishti Boral";
+const char MyName[] = "Srishti Anika";
 
 /* Change these constants to contain the paths out of your mazes. */
 const char ThePathOutOfMyMaze[] = "TODO: Replace this string with your path out of the normal maze.";
