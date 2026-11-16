@@ -1,13 +1,31 @@
 #include "Labyrinth.h"
+#include "hashset.h";
 using namespace std;
 
 bool isPathToFreedom(MazeCell* start, const string& moves) {
-    /* TODO: Delete this comment and the next few lines, then implement
-     * this function.
-     */
-    (void) start;
-    (void) moves;
-    return false;
+    MazeCell* curr = start; HashSet<Item> found;
+    if (curr->whatsHere != Item::NOTHING) {
+        found.add(curr->whatsHere); }
+    for (char move : moves) {
+        if (move == 'N') {
+            curr = curr->north;
+        }
+        else if (move == 'S') {
+            curr = curr->south;
+        }
+        else if (move == 'E') {
+            curr = curr->east;
+        }
+        else {
+            curr = curr->west;
+        }
+        if (curr == nullptr) {
+            return false;
+        } if (curr->whatsHere != Item::NOTHING) {
+            found.add(curr->whatsHere);
+        }
+    }
+    return found.size() == 3;
 }
 
 
@@ -17,6 +35,13 @@ bool isPathToFreedom(MazeCell* start, const string& moves) {
 
 /* Optional: Add your own custom tests here! */
 
+STUDENT_TEST("Gets all items but then walks into a wall") {
+    auto maze = toMaze({"P-S-W"});
+    EXPECT(!isPathToFreedom(maze[0][0], "EEE"));
+    for (auto* cell : maze) {
+        delete cell;
+    }
+}
 
 
 
