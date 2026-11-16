@@ -1,9 +1,10 @@
 #include "Labyrinth.h"
-#include "hashset.h";
+#include "hashset.h"
 using namespace std;
 
 bool isPathToFreedom(MazeCell* start, const string& moves) {
-    MazeCell* curr = start; HashSet<Item> found;
+    MazeCell* curr = start;
+    HashSet<Item> found;
     if (curr->whatsHere != Item::NOTHING) {
         found.add(curr->whatsHere); }
     for (char move : moves) {
