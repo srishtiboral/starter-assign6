@@ -18,7 +18,7 @@ const char MyName[] = "Srishti Anika";
 
 /* Change these constants to contain the paths out of your mazes. */
 const char ThePathOutOfMyMaze[] = "NESSSNNESSNNWNWWSSES";
-const char ThePathOutOfMyTwistyMaze[] = "TODO: Replace this string with your path out of the twisty maze.";
+const char ThePathOutOfMyTwistyMaze[] = "ESSNEEEEWSSWWE";
 
 PROVIDED_TEST("Escape from the labyrinth!") {
     /* A maze for you to escape from. This maze will be personalized
@@ -46,10 +46,6 @@ PROVIDED_TEST("Escape from the labyrinth!") {
      * like this.
      */
 }
-
-
-
-
 
 PROVIDED_TEST("Escape from the twisty labyrinth!") {
     /* Do not set a breakpoint here; set it at the EXPECT statement. */
