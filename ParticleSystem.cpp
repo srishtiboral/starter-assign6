@@ -3,33 +3,125 @@
 using namespace std;
 
 ParticleSystem::ParticleSystem() {
-    /* TODO: Delete this comment and implement this function. */
+    _head = nullptr;
+    _tail = nullptr;
+    _count = 0;
 }
 
 ParticleSystem::~ParticleSystem() {
-    /* TODO: Delete this comment and implement this function. */
+    ParticleCell* current = _head;
+    while (current != nullptr) {
+        ParticleCell* next = current->next;
+        delete current;
+        current = next;
+    }
 }
 
 int ParticleSystem::numParticles() const {
-    /* TODO: Delete this comment and the lines below, then
-     * implement this function.
-     */
-    return -1;
+    return _count;
 }
 
 void ParticleSystem::add(const Particle& data) {
-    /* TODO: Delete this comment and the lines below, then
-     * implement this function.
-     */
-    (void) data;
+    if (data.x < 0 || data.y < 0 ||
+        data.x >= SCENE_WIDTH || data.y >= SCENE_HEIGHT ||
+        data.lifetime < 0) {
+        return;
+    }
+
+    ParticleCell* cell = new ParticleCell{data, nullptr, _tail};
+
+    if (_tail == nullptr) {
+        _head = cell;
+    } else {
+        _tail->next = cell;
+    }
+
+    _tail = cell;
+    _count++;
 }
 
 void ParticleSystem::drawParticles() const {
-    /* TODO: Delete this comment and implement this function. */
+    ParticleCell* current = _head;
+
+    while (current != nullptr) {
+        drawParticle(current->particle.x, current->particle.y, current->particle.color);
+        current = current->next;
+    }
 }
 
 void ParticleSystem::moveParticles() {
-    /* TODO: Delete this comment and implement this function. */
+    ParticleCell* lastOriginal = _tail;
+    ParticleCell* current = _head;
+
+    while (current != nullptr) {
+        ParticleCell* next = current->next;
+
+        current->particle.x += current->particle.dx;
+        current->particle.y += current->particle.dy;
+        current->particle.lifetime--;
+
+        if (current->particle.type == ParticleType::BALLISTIC ||
+            current->particle.type == ParticleType::FIREWORK) {
+            current->particle.dy += 1;
+        }
+
+        bool outOfBounds =
+            current->particle.x < 0 || current->particle.y < 0 ||
+            current->particle.x >= SCENE_WIDTH ||
+            current->particle.y >= SCENE_HEIGHT;
+
+        bool expired = current->particle.lifetime < 0;
+        bool shouldExplode =
+            expired && current->particle.type == ParticleType::FIREWORK;
+
+        if (shouldExplode) {
+            double x = current->particle.x;
+            double y = current->particle.y;
+            Color explosionColor = Color::RANDOM();
+
+            for (int i = 0; i < 50; i++) {
+                Particle streamer;
+                streamer.x = x;
+                streamer.y = y;
+                streamer.color = explosionColor;
+                streamer.dx = randomInteger(-3, 3);
+                streamer.dy = randomInteger(-3, 3);
+                streamer.lifetime = randomInteger(2, 10);
+                streamer.type = ParticleType::STREAMER;
+                add(streamer);
+            }
+
+            /* If the firework was last, visit its newly added streamers next. */
+            if (current == lastOriginal) {
+                next = current->next;
+            }
+        }
+
+        if (expired || outOfBounds) {
+            if (current->prev != nullptr) {
+                current->prev->next = current->next;
+            } else {
+                _head = current->next;
+            }
+
+            if (current->next != nullptr) {
+                current->next->prev = current->prev;
+            } else {
+                _tail = current->prev;
+            }
+
+            delete current;
+            _count--;
+        }
+
+        /* Stop after processing the original last particle, unless an
+         * explosion appended streamers after it. */
+        if (current == lastOriginal && next == nullptr) {
+            break;
+        }
+
+        current = next;
+    }
 }
 
 /* * * * * Test Cases Below This Point * * * * */
