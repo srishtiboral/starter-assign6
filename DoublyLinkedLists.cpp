@@ -42,7 +42,7 @@ void prependTo(Cell*& list, const string& value) {
     newCell->prev = nullptr; // new cell is in front, so nullptr before it
     newCell->next = list; // old front comes afterwards
 
-    if(list != nullptr) { // handle the case of the list being empty, can't dereference null
+    if (list != nullptr) { // handle the case of the list being empty, can't dereference null
         list->prev = newCell;
     }
 

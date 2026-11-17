@@ -1,6 +1,30 @@
 #include "ParticleSystem.h"
 #include "DrawParticle.h"
+#include "random.h"
 using namespace std;
+
+// Settings for firework explosions.
+const int kNumStreamers = 50;
+const double kMaxStreamerSpeed = 3;
+const int kMinStreamerLifetime = 2;
+const int kMaxStreamerLifetime = 10;
+
+// returns whether a Particle is outside the visible scene
+bool isOffScreen(const Particle& particle) {
+    return particle.x < 0 || particle.y < 0 || particle.x >= SCENE_WIDTH || particle.y >= SCENE_HEIGHT;
+}
+
+/* Moves a particle one step by its velocity and lowers its lifetime by one.
+ * Ballistic and firework Particles also speed up downward (gravity). */
+
+void moveOneParticle(Particle& particle) {
+    particle.x += particle.dx;
+    particle.y += particle.dy;
+    particle.lifetime--;
+    if (particle.type == ParticleType::BALLISTIC || particle.type == ParticleType::FIREWORK) {
+        particle.dy++;
+    }
+}
 
 /*
  * constructor, creates empty Particle system and initializes variables to
@@ -31,9 +55,7 @@ int ParticleSystem::numParticles() const {
 
 // appends a Particle to the end of a list of Particles
 void ParticleSystem::add(const Particle& data) {
-    if (data.x < 0 || data.y < 0 ||
-        data.x >= SCENE_WIDTH || data.y >= SCENE_HEIGHT ||
-        data.lifetime < 0) { // ignore Particles that are off-screen or negative lifetime
+    if (isOffScreen(data) || data.lifetime < 0) { // ignore off-screen or negative lifetime
         return;
     }
 
@@ -142,16 +164,27 @@ void ParticleSystem::moveParticles() {
 
 /* * * * * Test Cases Below This Point * * * * */
 
-/* TODO: Some milestones of this assignment will require you to add your own
- * test cases. Delete this comment and put those tests here.
- */
-
-
-
-
-
-
-
+STUDENT_TEST("Milestone 1: add updates _tail and _count.") {
+    ParticleSystem system;
+    Particle one, two;
+    one.x = 1;
+    two.x = 2;
+    system.add(one); system.add(two);
+    EXPECT_EQUAL(system._count, 2);
+    EXPECT_EQUAL(system._tail->particle.x, 2);
+    EXPECT_EQUAL(system._tail->next, nullptr);
+}
+STUDENT_TEST("Milestone 5: Firework that leaves the screen does not explode.") {
+    ParticleSystem system;
+    Particle firework;
+    firework.type = ParticleType::FIREWORK;
+    firework.x = 1;
+    firework.y = 1;
+    firework.dx = -5;
+    system.add(firework);
+    system.moveParticles();
+    EXPECT_EQUAL(system.numParticles(), 0);
+}
 
 /* * * * * Provided Tests Below This Point * * * * */
 

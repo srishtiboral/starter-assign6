@@ -55,9 +55,20 @@ private:
      * are no particles in the list.
      */
     ParticleCell* _head;
+
+    /* Pointer to the last cell, or nullptr if the list is empty.
+     * Lets add run in O(1). */
     ParticleCell* _tail;
+
+    /* Number of particles in the list.
+     * Lets numParticles run in O(1). */
     int _count;
 
+    // Adds a burst of streamers at the firework's position.
+    void explode(const Particle& firework);
+
+    // Unlinks the given cell from the list and frees its memory.
+    void removeCell(ParticleCell* cell);
 
     /* Allows SimpleTest to peek inside the ParticleSystem type. */
     ALLOW_TEST_ACCESS();
