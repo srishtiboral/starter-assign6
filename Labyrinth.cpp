@@ -2,6 +2,15 @@
 #include "hashset.h"
 using namespace std;
 
+
+/*
+ * Returns whether the given path of moves, starting at start, is a legal path that
+ * picks up all three magical items.
+ * Parameters:
+ * moves represents a string with characters 'N', 'S', 'E', and 'W', representing
+ * cardinal directions in which the path moves.
+ * start represents the cell where the path begins
+ */
 bool isPathToFreedom(MazeCell* start, const string& moves) {
     if (start == nullptr) {
         return false;

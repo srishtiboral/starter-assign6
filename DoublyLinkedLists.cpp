@@ -14,11 +14,11 @@ struct Cell {
 /* Computes the length of a doubly-linked list of cells. This function must
  * be implemented iteratively, rather than recursively.
  */
-int lengthOf(Cell* list) {
+int lengthOf(Cell* list) { // list is a local copy of the pointer, doesn't change original
     int count = 0;
     while (list != nullptr) {
-        count++;
-        list = list->next;
+        count++; // count current cell
+        list = list->next; // move forward
     }
     return count;
 }
@@ -28,9 +28,9 @@ int lengthOf(Cell* list) {
  */
 void freeDoublyLinkedList(Cell* list) {
     while (list != nullptr) {
-        Cell* next = list->next;
-        delete list;
-        list = next;
+        Cell* next = list->next; // stores rest of list
+        delete list; // free current cell
+        list = next; // move forward
     }
 }
 
@@ -39,14 +39,14 @@ void prependTo(Cell*& list, const string& value) {
     Cell* newCell = new Cell;
 
     newCell->value = value;
-    newCell->prev = nullptr;
-    newCell->next = list;
+    newCell->prev = nullptr; // new cell is in front, so nullptr before it
+    newCell->next = list; // old front comes afterwards
 
-    if(list != nullptr) {
+    if(list != nullptr) { // handle the case of the list being empty, can't dereference null
         list->prev = newCell;
     }
 
-    list = newCell;
+    list = newCell; // new cell is now the head of the list
 }
 
 /* * * * * Test Cases Below This Point * * * * */

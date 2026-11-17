@@ -2,35 +2,44 @@
 #include "DrawParticle.h"
 using namespace std;
 
+/*
+ * constructor, creates empty Particle system and initializes variables to
+ * basic values
+*/
 ParticleSystem::ParticleSystem() {
     _head = nullptr;
     _tail = nullptr;
     _count = 0;
 }
 
+/*
+ * destructor, frees every cell in Particle list
+ */
 ParticleSystem::~ParticleSystem() {
     ParticleCell* current = _head;
     while (current != nullptr) {
-        ParticleCell* next = current->next;
+        ParticleCell* next = current->next; // save before deleting
         delete current;
         current = next;
     }
 }
 
+// returns the number of Particles using stored count
 int ParticleSystem::numParticles() const {
     return _count;
 }
 
+// appends a Particle to the end of a list of Particles
 void ParticleSystem::add(const Particle& data) {
     if (data.x < 0 || data.y < 0 ||
         data.x >= SCENE_WIDTH || data.y >= SCENE_HEIGHT ||
-        data.lifetime < 0) {
+        data.lifetime < 0) { // ignore Particles that are off-screen or negative lifetime
         return;
     }
 
     ParticleCell* cell = new ParticleCell{data, nullptr, _tail};
 
-    if (_tail == nullptr) {
+    if (_tail == nullptr) { // check if list was empty
         _head = cell;
     } else {
         _tail->next = cell;
@@ -40,6 +49,7 @@ void ParticleSystem::add(const Particle& data) {
     _count++;
 }
 
+// draws every Particle, front to back
 void ParticleSystem::drawParticles() const {
     ParticleCell* current = _head;
 
@@ -49,17 +59,23 @@ void ParticleSystem::drawParticles() const {
     }
 }
 
+/*
+ * Advances every Particle by one time step according to which kind of
+ * Particle it is/which scene we're running. Removes particles that have
+ * expired or left the screen.
+ */
 void ParticleSystem::moveParticles() {
     ParticleCell* lastOriginal = _tail;
     ParticleCell* current = _head;
 
     while (current != nullptr) {
-        ParticleCell* next = current->next;
+        ParticleCell* next = current->next; // save in case current is deleted
 
-        current->particle.x += current->particle.dx;
-        current->particle.y += current->particle.dy;
-        current->particle.lifetime--;
+        current->particle.x += current->particle.dx; // move Particle's x coordinate by its x velocity
+        current->particle.y += current->particle.dy; // move Particle's y coordinate by its y velocity
+        current->particle.lifetime--; // decrement lifetime with each movement
 
+        // implement gravity for ballistic and firework Particle types
         if (current->particle.type == ParticleType::BALLISTIC ||
             current->particle.type == ParticleType::FIREWORK) {
             current->particle.dy += 1;
@@ -77,9 +93,9 @@ void ParticleSystem::moveParticles() {
         if (shouldExplode) {
             double x = current->particle.x;
             double y = current->particle.y;
-            Color explosionColor = Color::RANDOM();
+            Color explosionColor = Color::RANDOM(); // all streamers should share one color
 
-            for (int i = 0; i < 50; i++) {
+            for (int i = 0; i < 50; i++) { // explode expired fireworks into 50 streamers
                 Particle streamer;
                 streamer.x = x;
                 streamer.y = y;
@@ -91,12 +107,13 @@ void ParticleSystem::moveParticles() {
                 add(streamer);
             }
 
-            /* If the firework was last, visit its newly added streamers next. */
+            // if the firework was last, visit newly added streamers next
             if (current == lastOriginal) {
                 next = current->next;
             }
         }
 
+        // unlink and delete cell
         if (expired || outOfBounds) {
             if (current->prev != nullptr) {
                 current->prev->next = current->next;
@@ -114,8 +131,7 @@ void ParticleSystem::moveParticles() {
             _count--;
         }
 
-        /* Stop after processing the original last particle, unless an
-         * explosion appended streamers after it. */
+        // Stop after processing the original last particle
         if (current == lastOriginal && next == nullptr) {
             break;
         }
