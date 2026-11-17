@@ -1,3 +1,15 @@
+/*
+ * File: DoublyLinkedLists.cpp
+ * Names: Srishti Boral, Anika Mukherjee
+ * Course: CS 106B
+ *
+ * Description: This file practices working with doubly linked lists, where
+ * each cell points to the cell before and after it. lengthOf counts the
+ * cells, freeDoublyLinkedList deletes every cell, and prependTo adds a new
+ * cell to the front of the list while keeping the next and prev pointers
+ * wired correctly.
+ */
+
 #include "GUI/MemoryDiagnostics.h"
 #include <string>
 using namespace std;

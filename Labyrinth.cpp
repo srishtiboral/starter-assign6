@@ -1,3 +1,14 @@
+/*
+ * File: Labyrinth.cpp
+ * Names: Srishti Boral, Anika Mukherjee
+ * Course: CS 106B
+ *
+ * Description: This file checks paths through a pointer maze.
+ * isPathToFreedom follows a string of N, S, E, and W moves from a starting
+ * cell and returns whether the path never walks into a wall and picks up
+ * the Spellbook, Potion, and Wand along the way.
+ */
+
 #include "Labyrinth.h"
 #include "hashset.h"
 using namespace std;

@@ -1,3 +1,14 @@
+/*
+ * File: LabyrinthEscape.cpp
+ * Names: Srishti Boral, Anika Mukherjee
+ * Course: CS 106B
+ *
+ * Description: This file holds the escape paths for our personalized
+ * mazes. We used the debugger to explore the regular maze and the twisty
+ * maze by following pointers between cells, mapped them on paper, and
+ * stored a path out of each one that picks up all three items.
+ */
+
 #include "Demos/MazeGenerator.h"
 #include "GUI/SimpleTest.h"
 using namespace std;

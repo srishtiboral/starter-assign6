@@ -1,3 +1,16 @@
+/*
+ * File: ParticleSystem.cpp
+ * Names: Srishti Boral, Anika Mukherjee
+ * Course: CS 106B
+ *
+ * Description: This file implements the ParticleSystem class. add puts new
+ * particles at the back of the list, drawParticles draws them front to
+ * back, and moveParticles moves every particle one step. Ballistic and
+ * firework particles fall faster over time, fireworks explode into 50
+ * streamers when their lifetime ends, and particles that expire or leave
+ * the screen are removed from the list right away.
+ */
+
 #include "ParticleSystem.h"
 #include "DrawParticle.h"
 #include "random.h"
@@ -82,84 +95,58 @@ void ParticleSystem::drawParticles() const {
 }
 
 /*
- * Advances every Particle by one time step according to which kind of
- * Particle it is/which scene we're running. Removes particles that have
- * expired or left the screen.
+ * Advances every Particle by one time step. Fireworks that expire explode
+ * into streamers, and Particles that expire or leave the screen are removed.
  */
 void ParticleSystem::moveParticles() {
-    ParticleCell* lastOriginal = _tail;
     ParticleCell* current = _head;
-
     while (current != nullptr) {
-        ParticleCell* next = current->next; // save in case current is deleted
-
-        current->particle.x += current->particle.dx; // move Particle's x coordinate by its x velocity
-        current->particle.y += current->particle.dy; // move Particle's y coordinate by its y velocity
-        current->particle.lifetime--; // decrement lifetime with each movement
-
-        // implement gravity for ballistic and firework Particle types
-        if (current->particle.type == ParticleType::BALLISTIC ||
-            current->particle.type == ParticleType::FIREWORK) {
-            current->particle.dy += 1;
-        }
-
-        bool outOfBounds =
-            current->particle.x < 0 || current->particle.y < 0 ||
-            current->particle.x >= SCENE_WIDTH ||
-            current->particle.y >= SCENE_HEIGHT;
-
+        moveOneParticle(current->particle);
         bool expired = current->particle.lifetime < 0;
-        bool shouldExplode =
-            expired && current->particle.type == ParticleType::FIREWORK;
-
-        if (shouldExplode) {
-            double x = current->particle.x;
-            double y = current->particle.y;
-            Color explosionColor = Color::RANDOM(); // all streamers should share one color
-
-            for (int i = 0; i < 50; i++) { // explode expired fireworks into 50 streamers
-                Particle streamer;
-                streamer.x = x;
-                streamer.y = y;
-                streamer.color = explosionColor;
-                streamer.dx = randomInteger(-3, 3);
-                streamer.dy = randomInteger(-3, 3);
-                streamer.lifetime = randomInteger(2, 10);
-                streamer.type = ParticleType::STREAMER;
-                add(streamer);
-            }
-
-            // if the firework was last, visit newly added streamers next
-            if (current == lastOriginal) {
-                next = current->next;
-            }
+        if (expired && current->particle.type == ParticleType::FIREWORK) {
+            explode(current->particle);
         }
 
-        // unlink and delete cell
-        if (expired || outOfBounds) {
-            if (current->prev != nullptr) {
-                current->prev->next = current->next;
-            } else {
-                _head = current->next;
-            }
-
-            if (current->next != nullptr) {
-                current->next->prev = current->prev;
-            } else {
-                _tail = current->prev;
-            }
-
-            delete current;
-            _count--;
+        // save next after any explosion (so new streamers move too)
+        // and before any delete (so we never read a deleted cell)
+        ParticleCell* next = current->next;
+        if (expired || isOffScreen(current->particle)) {
+            removeCell(current);
         }
-
-        // Stop after processing the original last particle
-        if (current == lastOriginal && next == nullptr) {
-            break;
-        }
-
         current = next;
     }
+}
+
+// adds streamers of one random color at the firework's last position
+void ParticleSystem::explode(const Particle& firework) {
+    Color explosionColor = Color::RANDOM();
+    for (int i = 0; i < kNumStreamers; i++) {
+        Particle streamer;
+        streamer.x = firework.x;
+        streamer.y = firework.y;
+        streamer.color = explosionColor;
+        streamer.dx = randomReal(-kMaxStreamerSpeed, kMaxStreamerSpeed);
+        streamer.dy = randomReal(-kMaxStreamerSpeed, kMaxStreamerSpeed);
+        streamer.lifetime = randomInteger(kMinStreamerLifetime, kMaxStreamerLifetime);
+        add(streamer);
+    }
+}
+
+// unlinks a cell from the front, middle, or back of the list and frees it
+void ParticleSystem::removeCell(ParticleCell* cell) {
+    if (cell->prev == nullptr) {
+        _head = cell->next;
+    }
+    else {
+        cell->prev->next = cell->next;
+    }
+    if (cell->next == nullptr) {
+        _tail = cell->prev;
+    }
+    else {
+        cell->next->prev = cell->prev;
+    }
+    delete cell; _count--;
 }
 
 /* * * * * Test Cases Below This Point * * * * */

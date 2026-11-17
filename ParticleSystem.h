@@ -1,3 +1,13 @@
+/*
+ * File: ParticleSystem.h
+ * Names: Srishti Boral, Anika Mukherjee
+ * Course: CS 106B
+ *
+ * Description: This file defines the ParticleSystem class, which stores
+ * particles in a doubly linked list. Along with the head pointer, it keeps
+ * a tail pointer and a count so that add and numParticles run in O(1).
+ */
+
 #pragma once
 
 #include "Particle.h"
