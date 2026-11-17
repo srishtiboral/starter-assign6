@@ -135,6 +135,7 @@ STUDENT_TEST("freeDoublyLinkedList: List of length 5.") {
 
     freeDoublyLinkedList(a);
 }
+
 /* * * * * Provided Tests Below This Point * * * * */
 
 /* Tests for lengthOf */

@@ -29,7 +29,6 @@ bool isOffScreen(const Particle& particle) {
 
 /* Moves a particle one step by its velocity and lowers its lifetime by one.
  * Ballistic and firework Particles also speed up downward (gravity). */
-
 void moveOneParticle(Particle& particle) {
     particle.x += particle.dx;
     particle.y += particle.dy;
@@ -146,7 +145,8 @@ void ParticleSystem::removeCell(ParticleCell* cell) {
     else {
         cell->next->prev = cell->prev;
     }
-    delete cell; _count--;
+    delete cell;
+    _count--;
 }
 
 /* * * * * Test Cases Below This Point * * * * */
